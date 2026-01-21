@@ -7,20 +7,14 @@
 
     <script>
       // Replace with the API endpoint you are authorized to test
-      const TARGET = "http://138.47.13.38:8080/rest/user/whoami";
+      const TARGET = "https://138.47.13.38:8080/rest/user/whoami";
 
       document.getElementById("go").onclick = async () => {
         const out = document.getElementById("out");
         out.textContent = "Fetching…";
 
         try {
-          const res = await fetch(TARGET, {
-            method: "GET",
-            // IMPORTANT:
-            // If the endpoint relies on cookies, you need credentials: "include"
-            // If it uses Authorization: Bearer, the browser won't magically add it.
-            credentials: "include"
-          });
+          const res = await fetch(TARGET);
 
           out.textContent =
             "Status: " + res.status + "\n" +
