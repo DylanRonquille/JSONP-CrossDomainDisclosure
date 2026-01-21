@@ -24,9 +24,17 @@
           const text = await res.text();
           out.textContent += text;
         } catch (e) {
-          out.textContent = "Blocked / Error:\n" + e;
+          const errorDetails = {
+            message: e.message,
+            stack: e.stack,
+            target: TARGET,
+            timestamp: new Date().toISOString(),
+          };
+
+          out.textContent = "Blocked / Error:
+" + JSON.stringify(errorDetails, null, 2);
         }
       };
-    </script>
+    <\/script>
   </body>
 </html>
