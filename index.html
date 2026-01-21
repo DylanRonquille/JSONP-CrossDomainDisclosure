@@ -14,27 +14,45 @@
         out.textContent = "Fetching…";
 
         try {
-          const res = await fetch(TARGET);
+          // Add options to include credentials for authentication if required
+          const res = await fetch(TARGET, {
+            credentials: "include", // Sends cookies along with the request
+          });
 
+          // Debugging CORS-related headers
+          console.log("Response Headers:");
+          console.log("Access-Control-Allow-Origin:", res.headers.get("access-control-allow-origin"));
+          console.log("Access-Control-Allow-Credentials:", res.headers.get("access-control-allow-credentials"));
+
+          // Check if the response was successful
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+
+          // Display response status and CORS headers
           out.textContent =
             "Status: " + res.status + "\n" +
             "ACAO: " + res.headers.get("access-control-allow-origin") + "\n" +
             "ACAC: " + res.headers.get("access-control-allow-credentials") + "\n\n";
 
+          // Display the response body
           const text = await res.text();
           out.textContent += text;
+
         } catch (e) {
+          // Log and display detailed error information
           const errorDetails = {
             message: e.message,
+            name: e.name,
             stack: e.stack,
             target: TARGET,
             timestamp: new Date().toISOString(),
           };
 
-          out.textContent = "Blocked / Error:
-" + JSON.stringify(errorDetails, null, 2);
+          console.error("Fetch Error:", errorDetails);
+          out.textContent = "Blocked / Error:\n" + JSON.stringify(errorDetails, null, 2);
         }
       };
-    <\/script>
+    </script>
   </body>
 </html>
