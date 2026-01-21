@@ -5,10 +5,21 @@
   <!--<h1>JSONP Behavior Test</h1>-->
 
   <script>
-    function testCallback(data) {
-      console.log("Received data:", data);
-    }
-  </script>
+async function test() {
+  const url = document.getElementById("url").value;
+
+  try {
+    const r = await fetch(url, { credentials: "include" });
+    const text = await r.text(); // if CORS blocks, you won't get here
+    document.getElementById("out").textContent =
+      `SUCCESS\nStatus: ${r.status}\n\nFirst 500 chars:\n` + text.slice(0, 500);
+  } catch (e) {
+    document.getElementById("out").textContent =
+      `BLOCKED (this is normal if CORS not allowed)\n\n` + e;
+  }
+}
+</script>
+
 
   <!-- Only works if the API supports JSONP -->
   <script src="https://authorized-lab.example/api?callback=testCallback"></script>
